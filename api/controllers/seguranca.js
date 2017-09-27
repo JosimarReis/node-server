@@ -6,9 +6,8 @@ var config = require('./../config/database');
 exports.autenticar = function(req, res){
    var keys = Object.keys(req.body);
     var params = JSON.parse(keys);
-    
-        //busca um usuario
-    
+
+//busca um usuario
     UsuarioModel.findOne({email:params.email}, function(err, usuario){
             if(err) console.log(err);
 
@@ -30,7 +29,7 @@ exports.autenticar = function(req, res){
 
                 }
             }
-                
+
 
     })
 }
@@ -39,7 +38,7 @@ exports.autenticar = function(req, res){
 exports.validaToken = function(req,res, next){
     var keys = Object.keys(req.body);
     var params = JSON.parse(keys);
-    var token = (params && params.token) || (req.query &&  
+    var token = (params && params.token) || (req.query &&
         req.query.token) || req.headers['x-access-token'];
         if(token){
                 var decoded = jwt.verify(token, config.secret, function(err, decoded){

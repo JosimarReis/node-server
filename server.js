@@ -17,7 +17,7 @@ mongoose.Promisse = global.Promise;
 mongoose.connect(config.database);
 mongoose.connection.on('open',function(){
     console.log('Mongo esta conectado.');
-    
+
     app = express();
     port = process.env.PORT || 3000;
     app.set('superSecret', config.secret);
@@ -28,7 +28,7 @@ mongoose.connection.on('open',function(){
     /**
      * registra as rotas da api
      */
-    routes(app); 
+    routes(app);
     app.use(passport.initialize());
     require('./api/config/passport')(passport);
 

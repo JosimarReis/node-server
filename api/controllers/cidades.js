@@ -17,7 +17,7 @@ exports.importar_cidades = function(req, res){
             if(err){
               console.log(err);
             }
-    
+
             res.json({success:true});
         });
     }, this);
@@ -68,18 +68,18 @@ exports.importaCidades = function(req, res){
     EstadosModel.find({}, function(err, estados){
         if(err)
         console.log('err -> '+err);
-       
+
         estados.forEach(function(estado){
 
             var cidades = estado.cidades.split(',');
-            
+
             cidades.forEach(function(item){
             var cidade = new CidadesModel({
                     nome:item,
                     estado:{sigla:estado.sigla,nome:estado.nome}
                 });
                 cidade.save();
-                
+
             });
     });
 })
@@ -91,7 +91,7 @@ exports.cidades_geolocalizacao = function(req, res){
     CidadesModel.find({'geo.latitude':{'$eq':""}})
     .limit(1)
     .exec(function(err,cidades){
-     
+
         var i=0;
         cidades.forEach(function(cidade) {
             var param = cidade.nome+' '+cidade.estado.nome+' Brasil'
@@ -115,14 +115,14 @@ exports.cidades_geolocalizacao = function(req, res){
         })
         .catch(function(err){
             if(err) console.log(err);
-        
+
         });
             i++;
         }, this);
         console.log(i+" cidades")
     })
 
-    
+
 }
 
 exports.distancia = function(req, res){
@@ -143,7 +143,7 @@ exports.distancia = function(req, res){
             origem:''
         }
 
-        
+
 
             AnuncioModel.find( { $text:{$search:rota.pesquisa.termo}})
             .sort({
@@ -158,9 +158,9 @@ exports.distancia = function(req, res){
                     rota.destino = cidadeDados(rota.pesquisa.localizacao)
                     .then(function(e){
                     res.json(rota);
-                
+
                     });
-                    
+
                 })
                 });
 
@@ -173,9 +173,10 @@ exports.distancia = function(req, res){
 
 }
 
+//Ire comentar para fazer um teste no gitt
 var cidadeDados = function(cidadeUf){
 
-    CidadesModel.find({ 
+    CidadesModel.find({
         $and:[ {nome:cidadeUf.cidade},
         {"estado.sigla":cidadeUf.uf}
         ]

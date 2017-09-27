@@ -5,26 +5,27 @@ module.exports = function(app){
     var usuarios = require('../controllers/usuarios');
     var seguranca = require('../controllers/seguranca');
     var cidades = require('../controllers/cidades');
+    var cidadesDistancia = require('../controllers/cidadesDistancias');
     var anuncios = require('../controllers/anuncios');
     var jwt = require('jsonwebtoken');
     var config = require('./../config/database');
     var actions = require('../actions/method');
-    
+
     app.use(function (req, res, next) {
-        
+
             // Website you wish to allow to connect
             res.setHeader('Access-Control-Allow-Origin', '*');
-        
+
             // Request methods you wish to allow
             res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-        
+
             // Request headers you wish to allow
             res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
-        
+
             // Set to true if you need the website to include cookies in the requests sent
             // to the API (e.g. in case you use sessions)
             res.setHeader('Access-Control-Allow-Credentials', true);
-        
+
             // Pass to next layer of middleware
             next();
         });
@@ -57,7 +58,7 @@ module.exports = function(app){
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         //decodifica o token
         if(token){
-   
+
            jwt.verify(token, config.secret, function(err, decoded){
                if(err){
                    return res.json({
@@ -75,19 +76,21 @@ module.exports = function(app){
                 message: 'Nenhum token foi encontrado.'
             });
         }
-   
+
     });/** */
     app.route('/api/usuario')
     .get(usuarios.usuario_listar_todos);
 
+    // cidades
+
     app.route('/api/cidades')
-    .post(cidades.listar_cidades_por_estado);  
+    .post(cidades.listar_cidades_por_estado);
     app.route('/api/importarcidades')
-    .post(cidades.importaCidades); 
+    .post(cidades.importaCidades);
     app.route('/api/geo')
     .post(cidades.cidades_geolocalizacao);
     app.route('/api/distancia')
-    .get(cidades.distancia);
+    .get(cidadesDistancia.calcularDistancias);
     //busca anuncios
     app.route('/api/anuncios')
     .post(anuncios.lista_anuncios_filtrados);
