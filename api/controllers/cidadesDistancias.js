@@ -6,9 +6,32 @@ var Promisse = require('bluebird');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
 var validUrl =require('valid-url');
+var distance = require('google-distance');
 
 var CidadesModel = require('../models/cidadesModel');
 var CidadesDistanciasModel = require('../models/cidadesDistanciasModel');
+var PesquisasModel = require('../models/pesquisaModel');
+var AnunciosModel = require('../models/anuncioModel');
+
+
+exports.distanciaSimples = function(req, res){
+  var keys = Object.keys(req.body);
+  var params = JSON.parse(keys);
+
+  distance.get(
+    {
+      origin: params.origem.cidade+", "+params.origem.uf,
+      destination: params.destino.cidade+", "+params.destino.uf,
+    },
+    function(err, data){
+      if(err) return console.log(err);
+
+      res.json(data);
+    }
+  );
+
+
+}
 
 
 /**
@@ -19,30 +42,12 @@ var CidadesDistanciasModel = require('../models/cidadesDistanciasModel');
 */
 exports.calcularDistancias = function(req, res){
 
-  CidadesModel.find({})
-  .limit(5)
-  .exec(
-    (err, cidades) => {
+  PesquisasModel.find({})
+  .distinct("localizacao", (err, anuncios) => {
       if(err) console.log(err);
-      // calcularDistanciasCidades(res, cidades);
-      // res.json(cidades);
-      var pagina= {
-        url:"http://itinerarios-mapa.com/percurso/Água Branca AL Brasil-Anadia AL Brasil"
-      }
-      request(pagina.url,function(err, response, html){
-       if(err)console.log(err);
-           var $ = cheerio.load(html);
-           var dados = {
-             distancia:'',
-             tempo:''
-           }
-           $('#SearchResul').filter(function(){
-               var data = $(this);
-               console.log(data.html());
-               dados.distancia=data.html();
-           })
-           res.json(dados)
-         });
+
+      res.json(anuncios.length);
+
     }
   );
 
@@ -66,6 +71,7 @@ var calcularDistanciasCidades = function(response, cidades){
        //cidades destino
      cidades.forEach(function(destino){
        if(origem!==destino){
+
         var  options={
              uri: "http://www.distanciasentrecidades.com/pesquisa?from="+origem.nome+" - "+origem.estado.sigla
              +", Brasil&to="+destino.nome+" - "+destino.estado.sigla+", Brasil",
