@@ -14,7 +14,9 @@ var passport = require('passport');
 
 //mongoose iniciar uma conexao com o banco de dados
 mongoose.Promisse = global.Promise;
-mongoose.connect(config.database);
+mongoose.connect(config.database,{
+    useMongoClient: true
+});
 mongoose.connection.on('open',function(){
     console.log('Mongo esta conectado.');
 

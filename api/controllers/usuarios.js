@@ -22,10 +22,15 @@ var verificaEmail = function(usuario){
  * o email é unico
  */
 exports.registro = function(req, res){
-    var usuario = new UsuarioModel(req.body);
+  var keys = Object.keys(req.body);
+  var params = JSON.parse(keys);
+
+    var usuario = new UsuarioModel(params);
+    console.log(usuario);
     usuario.save(function(err){
         if(err){
           console.log(err);
+          res.json({success:false});
         }
 
         res.json({success:true});
